@@ -1,8 +1,10 @@
-from pydantic import BaseModel, Field, PositiveInt
+from pydantic import BaseModel, PositiveInt, ConfigDict
 
 
 class CurrencySchema(BaseModel):
     id: PositiveInt | None = None
-    name: str
+    full_name: str
     code: str
     sign: str
+
+    model_config = ConfigDict(from_attributes=True)  # Позволяет преобразовывать SQLAlchemy объекты в Pydantic
