@@ -24,7 +24,7 @@ class ExchangeRatesModel(Base):
 
     base_currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id", ondelete='CASCADE'))
     target_currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id", ondelete='CASCADE'))
-    rate: Mapped[DECIMAL] = mapped_column(DECIMAL(precision=6, scale=2))
+    rate: Mapped[DECIMAL] = mapped_column(DECIMAL(precision=9, scale=6))
 
     # Определяем отношения
     base_currency: Mapped["CurrenciesModel"] = relationship(
