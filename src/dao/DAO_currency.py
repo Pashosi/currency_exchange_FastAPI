@@ -1,9 +1,10 @@
 import logging
 
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.exception.exceptions import CurrencyException
 from src.logging_config import setup_logging
 from src.models import CurrenciesModel
 from src.schemas.currency_schema import CurrencySchema
@@ -21,37 +22,50 @@ class CurrencyDAO:
         try:
             result = await self.session.execute(select(CurrenciesModel).where(CurrenciesModel.code == code))
             result = result.scalars().first()
-        # TODO обработка не правильного кода, когда выводится null
         except Exception as ex:
-            return {"message": f"Ошибка получения валюты: {ex}"}
+            logger.error(f"Ошибка при запросе на получении валюты {code} message={ex}")
+            raise CurrencyException(status_code=500, message=f"Ошибка доступа в базу данных")
+
+        if result is None:
+            logger.debug(f"Не найдена валюта {code}")
+            raise CurrencyException(status_code=404, message=f"Валюта не найдена")
 
         return result
 
-    async def create_currency(self, currency: CurrencySchema):
+    async def create_currency(self, code: str, full_name: str, sign: str) -> CurrencySchema:
+        if not all([code, full_name, sign]):
+            logger.debug(f"Отсутствует поле: code={code} name={full_name} sign={sign}")
+            raise CurrencyException(status_code=400, message=f"Отсутствует нужное поле формы")
+
         new_model = CurrenciesModel(
-            code=currency.code,
-            full_name=currency.full_name,
-            sign=currency.sign
+            code=code,
+            full_name=full_name,
+            sign=sign
         )
         self.session.add(new_model)
-        logger.debug("добавлена модель")
+        logger.debug(f"модель валюты {code} добавлена в ожидание")
         try:
             # Выполняем commit, чтобы сохранить данные
             await self.session.commit()
-            logger.debug("коммит")
+            logger.debug(f"коммит модели валюты {code} в БД")
 
             # Обновление модели
             await self.session.refresh(new_model)  # Это гарантирует, что все атрибуты обновлены из базы данных
-            logger.debug(new_model)
+            logger.debug(f"обновление валюты {code} из БД")
             return CurrencySchema.model_validate(new_model)  # Используем модель для валидации данных
 
         except IntegrityError as ex:
-            logger.info(f"код валюты не уникален. текст ошибки: {ex}")
-            return {"message": "Currency code must be unique"}
+            logger.debug(f"код валюты уже есть. текст ошибки: {ex}")
+            raise CurrencyException(status_code=409, message=f"Валюта с таким кодом уже существует")
         except Exception as ex:
             logger.error(f"другая ошибка добавления валюты, текст: {ex}")
-            return {"message": str(ex)}
+            raise CurrencyException(status_code=500, message=f"база данных недоступна")
 
-    async def get_currencies(self):
-        result = await self.session.execute(select(CurrenciesModel))
-        return [CurrencySchema.model_validate(currency) for currency in result.scalars().all()]
+    async def get_currencies(self) -> list[CurrencySchema]:
+        try:
+            result = await self.session.execute(select(CurrenciesModel))
+            list_schemas = [CurrencySchema.model_validate(currency) for currency in result.scalars().all()]
+            return list_schemas
+        except Exception as ex:
+            logger.error(f"Ошибка при запросе на получении списка валют message={ex}")
+            raise CurrencyException(status_code=500, message=f"Ошибка доступа в базу данных")

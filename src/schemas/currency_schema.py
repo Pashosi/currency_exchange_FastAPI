@@ -1,9 +1,9 @@
-from pydantic import BaseModel, PositiveInt, ConfigDict
+from pydantic import BaseModel, PositiveInt, ConfigDict, Field
 
 
 class CurrencySchema(BaseModel):
     id: PositiveInt | None = None
-    full_name: str
+    full_name: str = Field(..., serialization_alias="name")
     code: str
     sign: str
 
