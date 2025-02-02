@@ -1,4 +1,4 @@
-from sqlalchemy import String, ForeignKey, DECIMAL
+from sqlalchemy import String, ForeignKey, DECIMAL, UniqueConstraint
 from sqlalchemy.ext.asyncio import AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, relationship
 from sqlalchemy.orm import mapped_column
@@ -21,6 +21,9 @@ class CurrenciesModel(Base):
 
 class ExchangeRatesModel(Base):
     __tablename__ = "exchange_rates"
+    __table_args__ = (
+        UniqueConstraint('base_currency_id', 'target_currency_id', name='unique_currency_id'),  # Уникальный набор полей
+    )
 
     base_currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id", ondelete='CASCADE'))
     target_currency_id: Mapped[int] = mapped_column(ForeignKey("currencies.id", ondelete='CASCADE'))
@@ -35,4 +38,5 @@ class ExchangeRatesModel(Base):
     )
 
     def __repr__(self):
-        return f'ExchangeRatesModel: (id = {self.id}, base_currency_id = {self.base_currency_id}, target_currency_id = {self.target_currency_id}, rate = {self.rate})'
+        return (f'ExchangeRatesModel: (id = {self.id}, base_currency_id = {self.base_currency_id}, '
+                f'target_currency_id = {self.target_currency_id}, rate = {self.rate})')

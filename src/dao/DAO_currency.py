@@ -1,7 +1,7 @@
 import logging
 
 from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exception.exceptions import CurrencyException
@@ -24,18 +24,18 @@ class CurrencyDAO:
             result = result.scalars().first()
         except Exception as ex:
             logger.error(f"Ошибка при запросе на получении валюты {code} message={ex}")
-            raise CurrencyException(status_code=500, message=f"Ошибка доступа в базу данных")
+            raise CurrencyException(status_code=500, message="Ошибка доступа в базу данных")
 
         if result is None:
             logger.debug(f"Не найдена валюта {code}")
-            raise CurrencyException(status_code=404, message=f"Валюта не найдена")
+            raise CurrencyException(status_code=404, message="Валюта не найдена")
 
         return result
 
     async def create_currency(self, code: str, full_name: str, sign: str) -> CurrencySchema:
         if not all([code, full_name, sign]):
             logger.debug(f"Отсутствует поле: code={code} name={full_name} sign={sign}")
-            raise CurrencyException(status_code=400, message=f"Отсутствует нужное поле формы")
+            raise CurrencyException(status_code=400, message="Отсутствует нужное поле формы")
 
         new_model = CurrenciesModel(
             code=code,
@@ -56,10 +56,10 @@ class CurrencyDAO:
 
         except IntegrityError as ex:
             logger.debug(f"код валюты уже есть. текст ошибки: {ex}")
-            raise CurrencyException(status_code=409, message=f"Валюта с таким кодом уже существует")
+            raise CurrencyException(status_code=409, message="Валюта с таким кодом уже существует")
         except Exception as ex:
             logger.error(f"другая ошибка добавления валюты, текст: {ex}")
-            raise CurrencyException(status_code=500, message=f"база данных недоступна")
+            raise CurrencyException(status_code=500, message="база данных недоступна")
 
     async def get_currencies(self) -> list[CurrencySchema]:
         try:
@@ -68,4 +68,4 @@ class CurrencyDAO:
             return list_schemas
         except Exception as ex:
             logger.error(f"Ошибка при запросе на получении списка валют message={ex}")
-            raise CurrencyException(status_code=500, message=f"Ошибка доступа в базу данных")
+            raise CurrencyException(status_code=500, message="Ошибка доступа в базу данных")

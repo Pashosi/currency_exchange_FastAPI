@@ -20,13 +20,14 @@ LOGGING_CONFIG = {
         },
     },
     'loggers': {
-            'logger': {
-                'handlers': ['console'],
-                'level': 'DEBUG',
-                'propagate': False,
-            }
+        'logger': {
+            'handlers': ['console'],
+            'level': 'DEBUG',
+            'propagate': False,
         }
+    }
 }
+
 
 def setup_logging():
     logging.config.dictConfig(LOGGING_CONFIG)

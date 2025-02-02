@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, Path, HTTPException, Body, Form
+from fastapi import APIRouter, Depends, Path, Form
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dao.DAO_currency import CurrencyDAO
@@ -40,5 +40,5 @@ async def get_currency(code: Annotated[str, Path(max_length=3, min_length=3, pat
 
 
 @router.get('/currency')
-async def get_currency_without_code(db: AsyncSession = Depends(get_db)):
-    raise CurrencyException(status_code=400, message=f"Код валюты отсутствует в адресе")
+async def get_currency_without_code():
+    raise CurrencyException(status_code=400, message="Код валюты отсутствует в адресе")

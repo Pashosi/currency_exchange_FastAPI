@@ -11,6 +11,4 @@ class ExchangeSchema(BaseModel):
     amount: Decimal = Field(max_digits=9, decimal_places=6)
     converted_amount: Decimal = Field(max_digits=9, decimal_places=6)
 
-
     model_config = ConfigDict(from_attributes=True)  # Позволяет преобразовывать SQLAlchemy объекты в Pydantic
-

@@ -1,22 +1,20 @@
-import asyncio
-from typing import Annotated
+from typing import Annotated, Optional
 
 from fastapi import APIRouter
 from fastapi.params import Query, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import get_db
-from src.schemas.exchange_schema import ExchangeSchema
 from src.services.exchange_service import ExchangeService
 
 router = APIRouter(tags=["Конвертрация валют"])
 
+
 @router.get("/exchange", status_code=200)
 async def get_exchange(
-        base_currency: Annotated[str, Query(alias="from")],
-        target_currency: Annotated[str, Query(alias="to")],
-        amount: Annotated[float, Query()],
-        # service: Annotated[ExchangeService, Depends(exchange_service)],
+        amount: Annotated[Optional[float], Query()] = None,
+        base_currency: Annotated[str, Query(alias="from")] = None,
+        target_currency: Annotated[str, Query(alias="to")] = None,
         db: AsyncSession = Depends(get_db),
 ):
     service = ExchangeService(db)
