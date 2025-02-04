@@ -1,6 +1,6 @@
 import logging
 from decimal import Decimal
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, Path
 from fastapi.params import Form
@@ -47,22 +47,22 @@ async def get_exchange_rate_without_code():
 
 @router.post("/exchangeRates", status_code=201)
 async def create_exchange_rate(
-        base_currency_code: Annotated[str, Form()] = "",
-        target_currency_code: Annotated[str, Form()] = "",
+        baseCurrencyCode: Annotated[str, Form()] = "",
+        targetCurrencyCode: Annotated[str, Form()] = "",
         rate: Annotated[float, Form()] = None,
         db: AsyncSession = Depends(get_db)
 ) -> ExchangeRateSchema:
     dao_exchange = ExchangeDAO(db)
 
-    result = await dao_exchange.create_exchange_rate(base_currency_code=base_currency_code,
-                                                     target_currency_code=target_currency_code, rate=rate)
+    result = await dao_exchange.create_exchange_rate(base_currency_code=baseCurrencyCode,
+                                                     target_currency_code=targetCurrencyCode, rate=rate)
     return result
 
 
 @router.patch("/exchangeRate/{codes}", status_code=200)
 async def update_exchange_rate(
         codes: Annotated[str, Path(max_length=6)],
-        rate: Annotated[Optional[Decimal], Form()] = None,
+        rate: Annotated[Decimal | None, Form()] = None,
         db: AsyncSession = Depends(get_db),
 ) -> ExchangeRateSchema:
     base_code = codes[:3]
