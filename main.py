@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 
 from src.exception.exceptions import CurrencyException, CurrencyExchangeException
+from src.middleware import setup_cors
 from src.routes import currencies, exchange_rates, exchange
 
 app = FastAPI()
@@ -17,7 +18,7 @@ app.include_router(exchange.router)
 #     return {"message": "Hello curr"}
 
 @app.exception_handler(CurrencyException)
-async def currency_exception_handler(exc: CurrencyException):
+async def currency_exception_handler(request, exc: CurrencyException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"message": exc.message},
@@ -25,11 +26,15 @@ async def currency_exception_handler(exc: CurrencyException):
 
 
 @app.exception_handler(CurrencyExchangeException)
-async def currency_exchange_exception_handler(exc: CurrencyExchangeException):
+async def currency_exchange_exception_handler(request, exc: CurrencyExchangeException):
     return JSONResponse(
         status_code=exc.status_code,
         content={"message": exc.message},
     )
+
+
+# Настраиваем CORS
+setup_cors(app)
 
 
 if __name__ == '__main__':

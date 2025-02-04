@@ -1,8 +1,7 @@
 import logging
 
-from fastapi import HTTPException
 from sqlalchemy import select
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, aliased, selectinload
 
@@ -28,9 +27,9 @@ class ExchangeDAO:
                               joinedload(ExchangeRatesModel.target_currency)))
             result = await self.session.execute(query)
             return [ExchangeRateSchema.model_validate(exchange_rate) for exchange_rate in result.scalars().all()]
-        except SQLAlchemyError:
-            response = HTTPException(status_code=404, detail="Exchange rate not found")
-            return response
+        except Exception as ex:
+            logger.error(f"другая ошибка получения валюты, текст: {ex}")
+            raise CurrencyExchangeException(status_code=500, message="База данных недоступна")
 
     async def get_exchange_rate(self, base_code, target_code):
         BaseCurrency = aliased(CurrenciesModel)

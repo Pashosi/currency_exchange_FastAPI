@@ -1,4 +1,4 @@
-from typing import Annotated, Optional
+from typing import Annotated
 
 from fastapi import APIRouter
 from fastapi.params import Query, Depends
@@ -12,7 +12,7 @@ router = APIRouter(tags=["Конвертрация валют"])
 
 @router.get("/exchange", status_code=200)
 async def get_exchange(
-        amount: Annotated[Optional[float], Query()] = None,
+        amount: Annotated[float | None, Query()] = None,
         base_currency: Annotated[str, Query(alias="from")] = None,
         target_currency: Annotated[str, Query(alias="to")] = None,
         db: AsyncSession = Depends(get_db),
