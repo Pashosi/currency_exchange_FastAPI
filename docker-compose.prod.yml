@@ -1,0 +1,41 @@
+
+services:
+  dm_db:
+    image: postgres:latest
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastapi_app
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    depends_on:
+      - dm_db
+    env_file:
+      - .env
+    command: >
+      sh -c "
+      alembic upgrade head &&
+      poetry run python -m src.insert_data_db &&
+      poetry run uvicorn main:app --host 0.0.0.0 --port 8080
+      "
+  frontend:
+    image: nginx:latest
+    container_name: frontend
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+volumes:
+  postgres_data:
