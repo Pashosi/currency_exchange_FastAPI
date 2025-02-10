@@ -8,7 +8,7 @@ class ExchangeRateSchema(BaseModel):
     id: PositiveInt | None = None
     base_currency: CurrencySchema = Field(..., serialization_alias='baseCurrency')
     target_currency: CurrencySchema = Field(..., serialization_alias='targetCurrency')
-    rate: Decimal = Field(max_digits=9, decimal_places=6)
+    rate: Decimal = Field(max_digits=9, decimal_places=6, gt=0)
 
     model_config = ConfigDict(from_attributes=True)  # Позволяет преобразовывать SQLAlchemy объекты в Pydantic
 

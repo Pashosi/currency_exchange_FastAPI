@@ -56,7 +56,7 @@ class ExchangeDAO:
         return response_model
 
     async def create_exchange_rate(self, base_currency_code, target_currency_code, rate):
-        if not all([base_currency_code, target_currency_code]):
+        if not all([base_currency_code, target_currency_code, rate]):
             logger.debug(f"Запрос на создание обменного курса без необходимых данных. "
                          f"base_currency_code={base_currency_code}, target_currency_code={target_currency_code}, "
                          f"rate={rate}")

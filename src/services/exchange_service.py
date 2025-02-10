@@ -19,7 +19,9 @@ class ExchangeService:
 
     async def currencies_conversion(self, base_currency, target_currency, amount):
         dao_exchange = ExchangeDAO(self.session)
-
+        if amount is None:
+            logger.debug("Не ввел amount")
+            raise CurrencyExchangeException(status_code=400, message="Отсутствует нужное поле формы")
         try:
             # Прямой курс
             rate = await dao_exchange.get_exchange_rate(base_currency, target_currency)

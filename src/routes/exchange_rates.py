@@ -49,7 +49,7 @@ async def get_exchange_rate_without_code():
 async def create_exchange_rate(
         baseCurrencyCode: Annotated[str, Form()] = "",
         targetCurrencyCode: Annotated[str, Form()] = "",
-        rate: Annotated[float, Form()] = None,
+        rate: Annotated[Decimal | None, Form(ge=0)] = None,
         db: AsyncSession = Depends(get_db)
 ) -> ExchangeRateSchema:
     dao_exchange = ExchangeDAO(db)
@@ -62,7 +62,7 @@ async def create_exchange_rate(
 @router.patch("/exchangeRate/{codes}", status_code=200)
 async def update_exchange_rate(
         codes: Annotated[str, Path(max_length=6)],
-        rate: Annotated[Decimal | None, Form()] = None,
+        rate: Annotated[Decimal | None, Form(ge=0)] = None,
         db: AsyncSession = Depends(get_db),
 ) -> ExchangeRateSchema:
     base_code = codes[:3]
