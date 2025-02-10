@@ -1,22 +1,19 @@
-# Проект “Обмен валют”
+# Проект “Обмен валют” на FastAPI
 
 REST API для описания валют и обменных курсов. Позволяет просматривать и редактировать списки валют и обменных курсов, и совершать расчёт конвертации произвольных сумм из одной валюты в другую.
 
 [Техническое задание проекта](https://zhukovsd.github.io/python-backend-learning-course/projects/currency-exchange/)
 
 ## Реализация проекта с использованием следующих технологиий:
-![Python](https://img.shields.io/badge/Python-333?style=for-the-badge&logo=python&logoColor=yellow)
-![FastAPI](https://img.shields.io/badge/FastAPI-333?style=for-the-badge&logo=FastAPI&logoColor=#009688)
-![Asyncio](https://img.shields.io/badge/Asyncio-333?style=for-the-badge&logo=Asyncio)
-![Docker](https://img.shields.io/badge/Docker-333?style=for-the-badge&logo=docker&logoColor=blue)
-
-![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-333?style=for-the-badge)
-![Alembic](https://img.shields.io/badge/Alembic-333?style=for-the-badge&logo=Alembic)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-333?style=for-the-badge&logo=PostgreSQL)
-
-![Uvicorn](https://img.shields.io/badge/Uvicorn-333?style=for-the-badge&logo=Uvicorn)
-![Poetry](https://img.shields.io/badge/Poetry-333?style=for-the-badge&logo=Poetry)
-
+<img src="https://github.com/devicons/devicon/blob/master/icons/python/python-original-wordmark.svg" title="Python" alt="Python" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/fastapi/fastapi-original.svg" title="Fastapi" alt="Fastapi" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/docker/docker-original-wordmark.svg" title="Docker" alt="Docker" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/sqlalchemy/sqlalchemy-original.svg" title="sqlalchemy" alt="sqlalchemy" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/postgresql/postgresql-original-wordmark.svg" title="postgresql" alt="postgresql" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/poetry/poetry-original.svg" title="postgresql" alt="postgresql" width="40" height="40"/>&nbsp;
+![Uvicorn](https://img.shields.io/badge/Uvicorn-255?style=for-the-badge&logo=Uvicorn)
+![Alembic](https://img.shields.io/badge/Alembic-255?style=for-the-badge&logo=Uvicorn)
+![Asyncio](https://img.shields.io/badge/Asyncio-255?style=for-the-badge&logo=Uvicorn)
 ## Установка 
 
 Для успешного запуска приложения выполните следующие шаги:
