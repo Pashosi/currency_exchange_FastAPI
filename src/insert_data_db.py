@@ -1,12 +1,11 @@
 import asyncio
 import logging
 
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.dao.DAO_currency import CurrencyDAO
 from src.dao.DAO_exchange_rates import ExchangeDAO
-from src.database import engine, get_db
+from src.database import get_db
 from src.logging_config import setup_logging
 
 setup_logging()
