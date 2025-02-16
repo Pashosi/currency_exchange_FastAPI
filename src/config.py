@@ -20,6 +20,11 @@ class Settings(BaseSettings):
         return (f'postgresql+psycopg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_HOST}:'
                 f'{self.POSTGRES_PORT}/{self.POSTGRES_DB}')
 
+    @property
+    def TEST_DATABASE_URL(self):
+        return (f'postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@localhost:'
+                f'{self.POSTGRES_PORT}/test_db')
+
     model_config = SettingsConfigDict(env_file=Path(__file__).resolve().parent.parent / ".env")
 
 
