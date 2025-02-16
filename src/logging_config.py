@@ -1,4 +1,8 @@
 import logging.config
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Папка, где лежит logging_config.py
+LOG_FILE = os.path.join(BASE_DIR, "logs.log")  # Абсолютный путь
 
 LOGGING_CONFIG = {
     "version": 1,
@@ -15,7 +19,7 @@ LOGGING_CONFIG = {
         },
         "file": {
             "class": "logging.FileHandler",
-            "filename": "src/logs.log",
+            "filename": LOG_FILE,
             "formatter": "default",
         },
     },

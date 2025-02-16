@@ -3,6 +3,7 @@ from decimal import Decimal, ROUND_DOWN, ROUND_HALF_UP
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.dao.DAO_currency import CurrencyDAO
 from src.dao.DAO_exchange_rates import ExchangeDAO
 from src.exception.exceptions import CurrencyExchangeException
 from src.logging_config import setup_logging
@@ -19,7 +20,15 @@ class ExchangeService:
 
     async def currencies_conversion(self, base_currency, target_currency, amount):
         dao_exchange = ExchangeDAO(self.session)
-        if amount is None:
+        if base_currency == target_currency:
+            dao_currency = CurrencyDAO(self.session)
+            return ExchangeSchemaOut(
+                base_currency=await dao_currency.get_currency(base_currency),
+                target_currency=await dao_currency.get_currency(target_currency),
+                rate='1',
+                amount=amount,
+                converted_amount=amount)
+        elif amount is None:
             logger.debug("Не ввел amount")
             raise CurrencyExchangeException(status_code=400, message="Отсутствует нужное поле формы")
         try:
