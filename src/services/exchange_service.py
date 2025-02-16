@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dao.DAO_exchange_rates import ExchangeDAO
 from src.exception.exceptions import CurrencyExchangeException
 from src.logging_config import setup_logging
-from src.schemas.exchange_schema import ExchangeSchema
+from src.schemas.exchange_schema import ExchangeSchemaOut
 
 setup_logging()
 
@@ -28,7 +28,7 @@ class ExchangeService:
             converted = (Decimal(rate.rate) * Decimal(amount)).quantize(Decimal('.01'), rounding=ROUND_DOWN)
             logger.debug(f"Конвертация валюты с {base_currency} на {target_currency} по прямому курсу")
 
-            return ExchangeSchema(
+            return ExchangeSchemaOut(
                 base_currency=rate.base_currency,
                 target_currency=rate.target_currency,
                 rate=rate.rate.normalize(),
@@ -45,7 +45,7 @@ class ExchangeService:
                 converted = (Decimal(calculate_rate) * Decimal(amount)).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
                 logger.debug(f"Конвертация валюты с {base_currency} на {target_currency} по обратному курсу")
 
-                return ExchangeSchema(
+                return ExchangeSchemaOut(
                     base_currency=rate.base_currency,
                     target_currency=rate.target_currency,
                     rate=calculate_rate.normalize(),
@@ -66,7 +66,7 @@ class ExchangeService:
                     )
                     converted = (Decimal(rate) * Decimal(amount)).quantize(Decimal('.01'), rounding=ROUND_HALF_UP)
 
-                    return ExchangeSchema(
+                    return ExchangeSchemaOut(
                         base_currency=base_rate_usd.target_currency,
                         target_currency=target_rate_usd.target_currency,
                         rate=rate.normalize(),

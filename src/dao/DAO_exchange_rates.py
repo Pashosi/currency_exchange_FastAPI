@@ -9,7 +9,7 @@ from src.exception.exceptions import CurrencyExchangeException, CurrencyExceptio
 from src.logging_config import setup_logging
 from src.models import ExchangeRatesModel, CurrenciesModel
 from src.routes.currencies import get_currency
-from src.schemas.exchange_rates_schema import ExchangeRateSchema
+from src.schemas.exchange_rates_schema import ExchangeRateSchemaOut
 
 setup_logging()
 
@@ -26,7 +26,7 @@ class ExchangeDAO:
                      .options(joinedload(ExchangeRatesModel.base_currency),
                               joinedload(ExchangeRatesModel.target_currency)))
             result = await self.session.execute(query)
-            return [ExchangeRateSchema.model_validate(exchange_rate) for exchange_rate in result.scalars().all()]
+            return [ExchangeRateSchemaOut.model_validate(exchange_rate) for exchange_rate in result.scalars().all()]
         except Exception as ex:
             logger.error(f"другая ошибка получения валюты, текст: {ex}")
             raise CurrencyExchangeException(status_code=500, message="База данных недоступна")
@@ -52,7 +52,7 @@ class ExchangeDAO:
         response_object = result.scalars().first()
         if response_object is None:
             raise CurrencyExchangeException(status_code=404, message="Обменный курс для пары не найден")
-        response_model = ExchangeRateSchema.model_validate(response_object)
+        response_model = ExchangeRateSchemaOut.model_validate(response_object)
         return response_model
 
     async def create_exchange_rate(self, base_currency_code, target_currency_code, rate):
@@ -88,7 +88,7 @@ class ExchangeDAO:
             # Подгружаем связанные модели (base_currency и target_currency). Можно было делать через запрос
             await self.session.refresh(new_model, attribute_names=["base_currency", "target_currency"])
 
-            return ExchangeRateSchema.model_validate(new_model)  # Используем модель для валидации данных
+            return ExchangeRateSchemaOut.model_validate(new_model)  # Используем модель для валидации данных
         except IntegrityError as ex:
             logger.debug(f"Запрос на создание курса который уже существует. Текст {ex}")
             raise CurrencyExchangeException(status_code=409, message="Валютная пара с таким кодом уже существует")
@@ -132,4 +132,4 @@ class ExchangeDAO:
             logger.error(f"другая ошибка при сохранении м обновлении обменного курса, текст: {ex}")
             raise CurrencyExchangeException(status_code=500, message="База данных недоступна")
 
-        return ExchangeRateSchema.model_validate(old_model)  # Возвращаем обновленный объект в формате схемы
+        return ExchangeRateSchemaOut.model_validate(old_model)  # Возвращаем обновленный объект в формате схемы

@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.exception.exceptions import CurrencyException
 from src.logging_config import setup_logging
 from src.models import CurrenciesModel
-from src.schemas.currency_schema import CurrencySchema
+from src.schemas.currency_schema import CurrencySchemaOut
 
 setup_logging()
 
@@ -32,8 +32,8 @@ class CurrencyDAO:
 
         return result
 
-    async def create_currency(self, code: str, full_name: str, sign: str) -> CurrencySchema:
-        if not all([code, full_name, sign]):
+    async def create_currency(self, code: str, full_name: str, sign: str) -> CurrencySchemaOut:
+        if not all([code, full_name, sign]) or len(full_name) < 3:
             logger.debug(f"Отсутствует поле: code={code} name={full_name} sign={sign}")
             raise CurrencyException(status_code=400, message="Отсутствует нужное поле формы")
 
@@ -52,7 +52,7 @@ class CurrencyDAO:
             # Обновление модели
             await self.session.refresh(new_model)  # Это гарантирует, что все атрибуты обновлены из базы данных
             logger.debug(f"обновление валюты {code} из БД")
-            return CurrencySchema.model_validate(new_model)  # Используем модель для валидации данных
+            return CurrencySchemaOut.model_validate(new_model)  # Используем модель для валидации данных
 
         except IntegrityError as ex:
             logger.debug(f"код валюты уже есть. текст ошибки: {ex}")
@@ -61,10 +61,10 @@ class CurrencyDAO:
             logger.error(f"другая ошибка добавления валюты, текст: {ex}")
             raise CurrencyException(status_code=500, message="база данных недоступна")
 
-    async def get_currencies(self) -> list[CurrencySchema]:
+    async def get_currencies(self) -> list[CurrencySchemaOut]:
         try:
             result = await self.session.execute(select(CurrenciesModel))
-            list_schemas = [CurrencySchema.model_validate(currency) for currency in result.scalars().all()]
+            list_schemas = [CurrencySchemaOut.model_validate(currency) for currency in result.scalars().all()]
             return list_schemas
         except Exception as ex:
             logger.error(f"Ошибка при запросе на получении списка валют message={ex}")

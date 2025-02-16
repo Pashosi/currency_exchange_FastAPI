@@ -10,7 +10,7 @@ from src.dao.DAO_exchange_rates import ExchangeDAO
 from src.database import get_db
 from src.exception.exceptions import CurrencyExchangeException
 from src.logging_config import setup_logging
-from src.schemas.exchange_rates_schema import ExchangeRateSchema
+from src.schemas.exchange_rates_schema import ExchangeRateSchemaOut
 
 router = APIRouter(tags=["Обменные курсы"])
 
@@ -20,7 +20,7 @@ logger = logging.getLogger('logger')
 
 
 @router.get("/exchangeRates", status_code=200)
-async def get_exchange_rates(db: AsyncSession = Depends(get_db)) -> list[ExchangeRateSchema]:
+async def get_exchange_rates(db: AsyncSession = Depends(get_db)) -> list[ExchangeRateSchemaOut]:
     dao_exchange = ExchangeDAO(db)
     result = await dao_exchange.get_exchange_rates()
     return result
@@ -30,7 +30,7 @@ async def get_exchange_rates(db: AsyncSession = Depends(get_db)) -> list[Exchang
 async def get_exchange_rate(
         codes: Annotated[str, Path(max_length=6, min_length=6, pattern="^[A-Z]{6}$")],
         db: AsyncSession = Depends(get_db)
-) -> ExchangeRateSchema:
+) -> ExchangeRateSchemaOut:
     base_code = codes[:3]
     target_code = codes[3:]
     dao_exchange = ExchangeDAO(db)
@@ -51,7 +51,7 @@ async def create_exchange_rate(
         targetCurrencyCode: Annotated[str, Form()] = "",
         rate: Annotated[Decimal | None, Form(ge=0)] = None,
         db: AsyncSession = Depends(get_db)
-) -> ExchangeRateSchema:
+) -> ExchangeRateSchemaOut:
     dao_exchange = ExchangeDAO(db)
 
     result = await dao_exchange.create_exchange_rate(base_currency_code=baseCurrencyCode,
@@ -64,7 +64,7 @@ async def update_exchange_rate(
         codes: Annotated[str, Path(max_length=6)],
         rate: Annotated[Decimal | None, Form(ge=0)] = None,
         db: AsyncSession = Depends(get_db),
-) -> ExchangeRateSchema:
+) -> ExchangeRateSchemaOut:
     base_code = codes[:3]
     target_code = codes[3:]
     dao_exchange = ExchangeDAO(db)

@@ -6,13 +6,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.dao.DAO_currency import CurrencyDAO
 from src.database import get_db
 from src.exception.exceptions import CurrencyException
-from src.schemas.currency_schema import CurrencySchema
+from src.schemas.currency_schema import CurrencySchemaOut
 
 router = APIRouter(tags=["Валюты"])
 
 
 @router.get('/currencies', status_code=200)
-async def get_currencies(db: AsyncSession = Depends(get_db)) -> list[CurrencySchema]:
+async def get_currencies(db: AsyncSession = Depends(get_db)) -> list[CurrencySchemaOut]:
     dao_currency = CurrencyDAO(db)
     result = await dao_currency.get_currencies()
     return result
@@ -20,9 +20,9 @@ async def get_currencies(db: AsyncSession = Depends(get_db)) -> list[CurrencySch
 
 @router.post('/currencies', status_code=201)
 async def add_currency(
-        code: Annotated[str, Form()] = '',
-        name: Annotated[str, Form()] = '',
-        sign: Annotated[str, Form()] = '',
+        code: Annotated[str, Form(max_length=3)] = '',
+        name: Annotated[str, Form(max_length=30)] = '',
+        sign: Annotated[str, Form(max_length=3)] = '',
         db: AsyncSession = Depends(get_db),
 ):
     dao_currency = CurrencyDAO(db)
@@ -33,10 +33,10 @@ async def add_currency(
 
 @router.get('/currency/{code}', status_code=200)
 async def get_currency(code: Annotated[str, Path(max_length=3, min_length=3, pattern="^[A-Z]{3}$")],
-                       db: AsyncSession = Depends(get_db)) -> CurrencySchema:
+                       db: AsyncSession = Depends(get_db)) -> CurrencySchemaOut:
     dao_currency = CurrencyDAO(db)
     result = await dao_currency.get_currency(code=code)
-    return CurrencySchema.model_validate(result)
+    return CurrencySchemaOut.model_validate(result)
 
 
 @router.get('/currency')
