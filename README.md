@@ -11,6 +11,7 @@ REST API для описания валют и обменных курсов. П
 <img src="https://github.com/devicons/devicon/blob/master/icons/sqlalchemy/sqlalchemy-original.svg" title="sqlalchemy" alt="sqlalchemy" width="40" height="40"/>&nbsp;
 <img src="https://github.com/devicons/devicon/blob/master/icons/postgresql/postgresql-original-wordmark.svg" title="postgresql" alt="postgresql" width="40" height="40"/>&nbsp;
 <img src="https://github.com/devicons/devicon/blob/master/icons/poetry/poetry-original.svg" title="postgresql" alt="postgresql" width="40" height="40"/>&nbsp;
+<img src="https://github.com/devicons/devicon/blob/master/icons/pytest/pytest-original-wordmark.svg" title="pytest" alt="pytest" width="40" height="40"/>&nbsp;
 ![Uvicorn](https://img.shields.io/badge/Uvicorn-255?style=for-the-badge&logo=Uvicorn)
 ![Alembic](https://img.shields.io/badge/Alembic-255?style=for-the-badge&logo=Uvicorn)
 ![Asyncio](https://img.shields.io/badge/Asyncio-255?style=for-the-badge&logo=Uvicorn)
